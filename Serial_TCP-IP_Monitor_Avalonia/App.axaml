@@ -1,0 +1,103 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Serial_TCP_IP_Monitor_Avalonia.App"
+             x:CompileBindings="True"
+             RequestedThemeVariant="Dark">
+    <Application.Resources>
+        <ResourceDictionary>
+            <SolidColorBrush x:Key="AppBackgroundBrush" Color="#09111F" />
+            <SolidColorBrush x:Key="AppSurfaceBrush" Color="#111C2E" />
+            <SolidColorBrush x:Key="AppSurfaceRaisedBrush" Color="#17243A" />
+            <SolidColorBrush x:Key="AppBorderBrush" Color="#263750" />
+            <SolidColorBrush x:Key="AppTextBrush" Color="#E5EDF8" />
+            <SolidColorBrush x:Key="AppMutedTextBrush" Color="#8FA3BF" />
+            <SolidColorBrush x:Key="AccentBrush" Color="#38BDF8" />
+            <SolidColorBrush x:Key="AccentStrongBrush" Color="#0284C7" />
+            <SolidColorBrush x:Key="DangerBrush" Color="#F43F5E" />
+            <SolidColorBrush x:Key="SuccessBrush" Color="#22C55E" />
+            <SolidColorBrush x:Key="TerminalBrush" Color="#070D18" />
+        </ResourceDictionary>
+    </Application.Resources>
+
+    <Application.Styles>
+        <FluentTheme />
+
+        <Style Selector="Window">
+            <Setter Property="Background" Value="{StaticResource AppBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource AppTextBrush}" />
+            <Setter Property="FontFamily" Value="Inter" />
+        </Style>
+
+        <Style Selector="Border.Card">
+            <Setter Property="Background" Value="{StaticResource AppSurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource AppBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="14" />
+            <Setter Property="Padding" Value="16" />
+        </Style>
+
+        <Style Selector="TextBlock.Heading">
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{StaticResource AppTextBrush}" />
+        </Style>
+
+        <Style Selector="TextBlock.Subtle">
+            <Setter Property="Foreground" Value="{StaticResource AppMutedTextBrush}" />
+        </Style>
+
+        <Style Selector="TextBlock.FieldLabel">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{StaticResource AppMutedTextBrush}" />
+            <Setter Property="Margin" Value="2,0,0,5" />
+        </Style>
+
+        <Style Selector="Button.Primary">
+            <Setter Property="Background" Value="{StaticResource AccentStrongBrush}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Padding" Value="20,9" />
+            <Setter Property="CornerRadius" Value="9" />
+        </Style>
+        <Style Selector="Button.Primary:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+        </Style>
+        <Style Selector="Button.Primary.danger">
+            <Setter Property="Background" Value="{StaticResource DangerBrush}" />
+        </Style>
+
+        <Style Selector="Button.ToolButton">
+            <Setter Property="Background" Value="{StaticResource AppSurfaceRaisedBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource AppBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="11,7" />
+        </Style>
+
+        <Style Selector="RadioButton.Segment">
+            <Setter Property="Padding" Value="11,7" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style Selector="Ellipse.ConnectionDot">
+            <Setter Property="Fill" Value="{StaticResource AppMutedTextBrush}" />
+        </Style>
+        <Style Selector="Ellipse.ConnectionDot.connected">
+            <Setter Property="Fill" Value="{StaticResource SuccessBrush}" />
+        </Style>
+        <Style Selector="Ellipse.ConnectionDot.error">
+            <Setter Property="Fill" Value="{StaticResource DangerBrush}" />
+        </Style>
+
+        <Style Selector="ListBox.Terminal">
+            <Setter Property="Background" Value="{StaticResource TerminalBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="8" />
+        </Style>
+        <Style Selector="ListBox.Terminal ListBoxItem">
+            <Setter Property="Padding" Value="5,3" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
+    </Application.Styles>
+</Application>

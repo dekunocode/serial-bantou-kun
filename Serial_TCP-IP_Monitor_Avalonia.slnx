@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Serial_TCP-IP_Monitor_Avalonia/Serial_TCP-IP_Monitor_Avalonia.csproj" />
+  <Project Path="Serial_TCP-IP_Monitor_Avalonia.Tests/Serial_TCP-IP_Monitor_Avalonia.Tests.csproj" />
+</Solution>

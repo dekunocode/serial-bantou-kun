@@ -1,0 +1,266 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:Serial_TCP_IP_Monitor_Avalonia.ViewModels"
+        xmlns:models="using:Serial_TCP_IP_Monitor_Avalonia.Models"
+        xmlns:converters="using:Serial_TCP_IP_Monitor_Avalonia.Converters"
+        x:Class="Serial_TCP_IP_Monitor_Avalonia.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        x:CompileBindings="True"
+        mc:Ignorable="d"
+        d:DesignWidth="1200"
+        d:DesignHeight="780"
+        Width="1080"
+        Height="620"
+        MinWidth="800"
+        MinHeight="500"
+        WindowStartupLocation="CenterScreen"
+        Icon="/Assets/icon.ico"
+        Title="シリアル番頭くん">
+
+    <Window.Resources>
+        <converters:LogCategoryBrushConverter x:Key="LogCategoryBrushConverter" />
+    </Window.Resources>
+
+    <Grid Margin="16" RowDefinitions="Auto,*,Auto,Auto" RowSpacing="10">
+        <Border Grid.Row="0" Classes="Card">
+            <Grid RowDefinitions="Auto,Auto" RowSpacing="13">
+                <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="10">
+                    <Border Padding="5,2"
+                            Background="{StaticResource AppSurfaceRaisedBrush}"
+                            CornerRadius="10">
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <RadioButton Classes="Segment"
+                                         Content="シリアル"
+                                         GroupName="ConnectionMode"
+                                         ToolTip.Tip="COMポートを使ってシリアル通信します"
+                                         IsChecked="{Binding IsSerialMode}"
+                                         IsEnabled="{Binding CanEditConnection}" />
+                            <RadioButton Classes="Segment"
+                                         Content="TCP/IP"
+                                         GroupName="ConnectionMode"
+                                         ToolTip.Tip="ネットワーク上のホストへTCPで接続します"
+                                         IsChecked="{Binding IsTcpMode}"
+                                         IsEnabled="{Binding CanEditConnection}" />
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Grid.Column="1"
+                               VerticalAlignment="Center"
+                               Classes="Subtle"
+                               FontSize="12"
+                               Text="通信条件は接続中にロックされます" />
+
+                    <Border Grid.Column="2"
+                            Padding="11,7"
+                            VerticalAlignment="Center"
+                            Background="{StaticResource AppSurfaceRaisedBrush}"
+                            BorderBrush="{StaticResource AppBorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="18">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Ellipse Width="9"
+                                     Height="9"
+                                     VerticalAlignment="Center"
+                                     Classes="ConnectionDot"
+                                     Classes.connected="{Binding IsConnected}"
+                                     Classes.error="{Binding StatusIsError}" />
+                            <TextBlock VerticalAlignment="Center"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Text="{Binding ConnectionLabel}" />
+                        </StackPanel>
+                    </Border>
+
+                    <Button Grid.Column="3"
+                            MinWidth="118"
+                            Classes="Primary"
+                            Classes.danger="{Binding IsConnected}"
+                            Command="{Binding ConnectOrDisconnectCommand}"
+                            Content="{Binding ConnectButtonText}" />
+                </Grid>
+
+                <StackPanel Grid.Row="1" Spacing="10">
+                    <WrapPanel IsVisible="{Binding IsSerialMode}" ItemSpacing="8" LineSpacing="8">
+                        <StackPanel Width="215"
+                                    ToolTip.Tip="接続に使用するCOMポートを選択します">
+                            <TextBlock Classes="FieldLabel" Text="ポート" />
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
+                                <ComboBox ItemsSource="{Binding Ports}"
+                                          SelectedItem="{Binding SelectedPort}"
+                                          IsEnabled="{Binding CanEditConnection}" />
+                                <Button Grid.Column="1"
+                                        Classes="ToolButton"
+                                        Command="{Binding RefreshPortsCommand}"
+                                        Content="更新"
+                                        ToolTip.Tip="利用可能なCOMポートを再検索します"
+                                        IsEnabled="{Binding CanEditConnection}" />
+                            </Grid>
+                        </StackPanel>
+                        <StackPanel Width="105"
+                                    ToolTip.Tip="1秒間に送受信するビット数を指定します">
+                            <TextBlock Classes="FieldLabel" Text="ボーレート" />
+                            <ComboBox ItemsSource="{Binding BaudRates}" SelectedItem="{Binding SelectedBaudRate}" IsEnabled="{Binding CanEditConnection}" />
+                        </StackPanel>
+                        <StackPanel Width="96"
+                                    ToolTip.Tip="通信エラーを検出するパリティ方式を指定します">
+                            <TextBlock Classes="FieldLabel" Text="パリティ" />
+                            <ComboBox ItemsSource="{Binding ParityOptions}" SelectedItem="{Binding SelectedParity}" IsEnabled="{Binding CanEditConnection}" />
+                        </StackPanel>
+                        <StackPanel Width="88"
+                                    ToolTip.Tip="1文字を構成するデータビット数を指定します">
+                            <TextBlock Classes="FieldLabel" Text="データ長" />
+                            <ComboBox ItemsSource="{Binding DataBitsOptions}" SelectedItem="{Binding SelectedDataBits}" IsEnabled="{Binding CanEditConnection}" />
+                        </StackPanel>
+                        <StackPanel Width="116"
+                                    ToolTip.Tip="各データの終端を示すストップビット数を指定します">
+                            <TextBlock Classes="FieldLabel" Text="ストップビット" />
+                            <ComboBox ItemsSource="{Binding StopBitsOptions}" SelectedItem="{Binding SelectedStopBits}" IsEnabled="{Binding CanEditConnection}" />
+                        </StackPanel>
+                        <StackPanel Width="130"
+                                    ToolTip.Tip="送受信の速度を調整するハンドシェイク方式を指定します">
+                            <TextBlock Classes="FieldLabel" Text="フロー制御" />
+                            <ComboBox ItemsSource="{Binding HandshakeOptions}" SelectedItem="{Binding SelectedHandshake}" IsEnabled="{Binding CanEditConnection}" />
+                        </StackPanel>
+                        <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal" Spacing="8" Margin="0,0,0,7">
+                            <CheckBox Content="DTR"
+                                      ToolTip.Tip="DTR（Data Terminal Ready）信号を有効にします"
+                                      IsChecked="{Binding DtrEnable}"
+                                      IsEnabled="{Binding CanEditConnection}" />
+                            <CheckBox Content="RTS"
+                                      ToolTip.Tip="RTS（Request To Send）信号を有効にします。RTSを使うフロー制御中は自動制御されます"
+                                      IsChecked="{Binding RtsEnable}"
+                                      IsEnabled="{Binding RtsManualEnabled}" />
+                        </StackPanel>
+                    </WrapPanel>
+
+                    <WrapPanel IsVisible="{Binding IsTcpMode}" ItemSpacing="8" LineSpacing="8">
+                        <StackPanel Width="280"
+                                    ToolTip.Tip="接続先のホスト名またはIPアドレスを入力します">
+                            <TextBlock Classes="FieldLabel" Text="ホスト名 / IPアドレス" />
+                            <TextBox Text="{Binding TcpHost}" PlaceholderText="127.0.0.1" IsEnabled="{Binding CanEditConnection}" />
+                        </StackPanel>
+                        <StackPanel Width="110"
+                                    ToolTip.Tip="接続先のTCPポート番号を入力します">
+                            <TextBlock Classes="FieldLabel" Text="ポート" />
+                            <TextBox Text="{Binding TcpPortText}" PlaceholderText="23" IsEnabled="{Binding CanEditConnection}" />
+                        </StackPanel>
+                    </WrapPanel>
+
+                    <WrapPanel ItemSpacing="8" LineSpacing="8">
+                        <StackPanel Width="120"
+                                    ToolTip.Tip="テキストの送受信に使用する文字コードを指定します">
+                            <TextBlock Classes="FieldLabel" Text="文字コード" />
+                            <ComboBox ItemsSource="{Binding EncodingOptions}" SelectedItem="{Binding SelectedEncoding}" IsEnabled="{Binding CanEditConnection}" />
+                        </StackPanel>
+                        <StackPanel Width="120"
+                                    ToolTip.Tip="受信データをログの1項目として確定する区切り文字を指定します">
+                            <TextBlock Classes="FieldLabel" Text="受信区切り" />
+                            <ComboBox ItemsSource="{Binding ReceiveDelimiterOptions}" SelectedItem="{Binding SelectedReceiveDelimiter}" IsEnabled="{Binding CanEditConnection}" />
+                        </StackPanel>
+                        <StackPanel Width="120"
+                                    ToolTip.Tip="送信データの末尾へ自動で追加する区切り文字を指定します">
+                            <TextBlock Classes="FieldLabel" Text="送信区切り" />
+                            <ComboBox ItemsSource="{Binding TransmitDelimiterOptions}" SelectedItem="{Binding SelectedTransmitDelimiter}" />
+                        </StackPanel>
+                        <StackPanel Width="110"
+                                    ToolTip.Tip="受信データを文字列または16進数で表示します">
+                            <TextBlock Classes="FieldLabel" Text="受信表示" />
+                            <ComboBox ItemsSource="{Binding ViewModeOptions}" SelectedItem="{Binding ReceiveViewMode}" />
+                        </StackPanel>
+                        <CheckBox Margin="0,21,0,0"
+                                  Content="区切りタグを表示"
+                                  ToolTip.Tip="CR、LF、STXなどの制御文字をタグとしてログに表示します"
+                                  IsChecked="{Binding ShowDelimiterTags}" />
+                    </WrapPanel>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="1" Classes="Card" Padding="0" ClipToBounds="True">
+            <Grid RowDefinitions="Auto,*">
+                <Grid Margin="14,11" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                    <StackPanel Orientation="Horizontal" Spacing="11" VerticalAlignment="Center">
+                        <CheckBox Content="RX" Foreground="#4ADE80" IsChecked="{Binding FilterReceive}" />
+                        <CheckBox Content="TX" Foreground="#60A5FA" IsChecked="{Binding FilterTransmit}" />
+                        <CheckBox Content="SYSTEM" Foreground="#94A3B8" IsChecked="{Binding FilterSystem}" />
+                        <CheckBox Content="ERROR" Foreground="#FB7185" IsChecked="{Binding FilterError}" />
+                    </StackPanel>
+
+                    <TextBox Grid.Column="1"
+                             MaxWidth="300"
+                             HorizontalAlignment="Right"
+                             Text="{Binding SearchText}"
+                             PlaceholderText="ログを検索" />
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="7">
+                        <CheckBox VerticalAlignment="Center" Content="自動スクロール" IsChecked="{Binding AutoScroll}" />
+                        <Button Classes="ToolButton" Command="{Binding SaveLogCommand}" Content="保存" />
+                        <Button Classes="ToolButton" Command="{Binding ClearLogCommand}" Content="消去" />
+                    </StackPanel>
+                </Grid>
+
+                <ListBox x:Name="LogList"
+                         Grid.Row="1"
+                         Classes="Terminal"
+                         ItemsSource="{Binding VisibleLogs}"
+                         SelectionMode="Multiple">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="models:LogEntry">
+                            <Grid ColumnDefinitions="90,72,*" ColumnSpacing="8">
+                                <TextBlock FontFamily="Cascadia Mono,Consolas"
+                                           FontSize="12"
+                                           Foreground="{StaticResource AppMutedTextBrush}"
+                                           Text="{Binding TimestampText}" />
+                                <TextBlock Grid.Column="1"
+                                           FontFamily="Cascadia Mono,Consolas"
+                                           FontSize="12"
+                                           FontWeight="SemiBold"
+                                           Foreground="{Binding Category, Converter={StaticResource LogCategoryBrushConverter}}"
+                                           Text="{Binding CategoryLabel}" />
+                                <SelectableTextBlock Grid.Column="2"
+                                                     FontFamily="Cascadia Mono,Consolas"
+                                                     FontSize="12"
+                                                     Foreground="{Binding Category, Converter={StaticResource LogCategoryBrushConverter}}"
+                                                     Text="{Binding Message}"
+                                                     TextWrapping="Wrap" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="2" ColumnDefinitions="100,135,*,Auto" ColumnSpacing="9">
+            <ComboBox ItemsSource="{Binding ViewModeOptions}" SelectedItem="{Binding SendMode}" />
+            <ComboBox Grid.Column="1" ItemsSource="{Binding TransmitDelimiterOptions}" SelectedItem="{Binding SelectedTransmitDelimiter}" />
+            <TextBox x:Name="SendTextBox"
+                     Grid.Column="2"
+                     Text="{Binding SendText}"
+                     PlaceholderText="送信データ（Text: [STX] / [0xFF]、Hex: 02 FF 03）" />
+            <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="9">
+                <Button MinWidth="118"
+                        Classes="Primary"
+                        Command="{Binding SendCommand}"
+                        Content="送信" />
+            </StackPanel>
+        </Grid>
+
+        <Border Grid.Row="3"
+                Padding="12,8"
+                Background="{StaticResource AppSurfaceBrush}"
+                CornerRadius="9">
+            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="18">
+                <TextBlock Classes="Subtle" Text="{Binding StatusMessage}" />
+                <TextBlock Grid.Column="1" Foreground="#4ADE80" FontWeight="SemiBold" Text="{Binding ReceivedBytesText}" />
+                <TextBlock Grid.Column="2" Foreground="#60A5FA" FontWeight="SemiBold" Text="{Binding TransmittedBytesText}" />
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'リリースするタグ（例: v1.0.0）'
+        required: true
+        default: 'v1.0.0'
 
 permissions:
   contents: write
@@ -24,7 +30,7 @@ jobs:
       - name: Publish (ReadyToRun + compressed single file)
         shell: pwsh
         run: |
-          $version = '${{ github.ref_name }}'.TrimStart('v')
+          $version = '${{ inputs.tag || github.ref_name }}'.TrimStart('v')
           dotnet publish Serial_TCP-IP_Monitor_Avalonia\Serial_TCP-IP_Monitor_Avalonia.csproj `
             --configuration Release --runtime win-x64 `
             -p:PublishReadyToRun=true -p:EnableCompressionInSingleFile=true `
@@ -36,11 +42,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $tag = '${{ github.ref_name }}'
+          $tag = '${{ inputs.tag || github.ref_name }}'
           $exe = 'publish\SerialBantouKun.exe'
           $hash = (Get-FileHash $exe -Algorithm SHA256).Hash.ToLower()
           $notesFile = ".github\release-notes\$tag.md"
           $notes = if (Test-Path $notesFile) { Get-Content $notesFile -Raw -Encoding utf8 } else { '' }
           $notes += "`n`nSHA-256: ``$hash``"
           Set-Content -Path release-notes.md -Value $notes -Encoding utf8
-          gh release create $tag $exe --draft --title "シリアル番頭くん $tag" --notes-file release-notes.md
+          gh release create $tag $exe --draft --target ${{ github.sha }} --title "シリアル番頭くん $tag" --notes-file release-notes.md
